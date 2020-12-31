@@ -1,0 +1,40 @@
+version: '3'
+services:
+  go-study:
+    build: .
+    ports:
+      - 8070:8070
+      - 2345:2345 #delve(デバッグ用のポート)
+    security_opt:
+      - apparmor:unconfined
+    networks:
+      - go-study
+    cap_add:
+      - SYS_PTRACE
+    volumes:
+      - ../:/go/src/go-study # マウントディレクトリ指定  -
+      - ${GOPATH}:/go
+    tty: true
+
+  database:
+    image: mysql:5.7
+    container_name: mysql
+    networks:
+      - go-study
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: go-study
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./mysql/db/data:/var/lib/mysql
+      - ./mysql/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/db/sql/schema:/docker-entrypoint-initdb.d
+    ports:
+      - 4306:3306
+networks:
+  go-study:
