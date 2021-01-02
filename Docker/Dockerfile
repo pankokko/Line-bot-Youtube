@@ -7,4 +7,4 @@ ENV GO111MODULE=on
 COPY . .
 RUN go get -u github.com/cosmtrek/air
 
-CMD go run main.go
+#CMD go run main.go
