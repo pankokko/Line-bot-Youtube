@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/line/line-bot-sdk-go/linebot" //==========この行を追加==========
+	"github.com/line/line-bot-sdk-go/linebot"
 	"gopkg.in/ini.v1"
 	"io/ioutil"
 	"log"
@@ -40,43 +40,12 @@ func LineHandler(w http.ResponseWriter, r *http.Request) {
 				switch m := event.Message.(type) {
 				case *linebot.TextMessage:
 					spew.Dump(m)
-					bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(m.Text)).Do()
+					videoUrl := fetchYoutubeMovieUrl()
+					bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(videoUrl)).Do()
 				}
 		}
 	}
-
-
-	//for _, event := range webhook.Events {
-	//	switch event.Type {
-	//	case linebot.EventTypeMessage: //type: messageのとき
-	//		switch m := event.Message.(type) {
-	//		case *linebot.TextMessage: //type: textのとき
-	//			if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(m.Text)).Do(); err != nil {
-	//				log.Print(err)
-	//				return events.APIGatewayProxyResponse{
-	//					StatusCode: http.StatusInternalServerError,
-	//					Body:       fmt.Sprintf(`{"message":"%s"}`+"\n", http.StatusText(http.StatusBadRequest)),
-	//				}, nil
-	//			}
-	//		}
-	//	}
-	//}
-	//return events.APIGatewayProxyResponse{
-	//	StatusCode: 200,
-	//}, nil
-
 }
-
-//func IndexHandler(w http.ResponseWriter, r *http.Request)  {
-//	t, err := template.ParseFiles("Views/index.html")
-//	if err != nil{
-//		fmt.Println("error")
-//	}
-//	 if err := t.Execute(w,nil); err != nil{
-//	 	fmt.Println("error")
-//	 }
-//
-//}
 
 func main() {
 	http.HandleFunc("/", LineHandler)
